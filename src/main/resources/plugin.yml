@@ -1,0 +1,6 @@
+name: FMEnchants
+version: '${project.version}'
+main: org.fmenchants.FMEnchants
+api-version: '1.13'
+author: 'Mor0n'
+description: "Add custom enchants from minecraft server 'FrandMine'"
