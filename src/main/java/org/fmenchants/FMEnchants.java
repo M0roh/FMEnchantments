@@ -4,6 +4,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.fmenchants.Commands.FMEnchantsCommand;
 import org.fmenchants.Enchants.LumberjackEnchant;
+import org.fmenchants.Listeners.AnvilListener;
 import org.fmenchants.Listeners.LumberjackListener;
 import org.fmenchants.TabCompleters.FMEnchantsTabCompleter;
 
@@ -20,6 +21,8 @@ public final class FMEnchants extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
+        saveDefaultConfig();
+
         try {
             Field f = Enchantment.class.getDeclaredField("acceptingNew");
             f.setAccessible(true);
@@ -35,6 +38,7 @@ public final class FMEnchants extends JavaPlugin {
 
 
         getServer().getPluginManager().registerEvents(new LumberjackListener(), this);
+        getServer().getPluginManager().registerEvents(new AnvilListener(), this);
 
         getCommand("fmenchants").setExecutor(new FMEnchantsCommand());
         getCommand("fmenchants").setTabCompleter(new FMEnchantsTabCompleter());

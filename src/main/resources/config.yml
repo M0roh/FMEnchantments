@@ -1,6 +1,8 @@
 lumberjack:
   name: "&7Дровосек"
 
+expCost: 2
+
 prefix: "&eFMEnchants &7| "
 
 messages:
