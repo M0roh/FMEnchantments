@@ -13,6 +13,7 @@ import org.fmenchants.FMEnchants;
 import org.fmenchants.Util;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class FMEnchantsCommand implements CommandExecutor {
@@ -36,7 +37,7 @@ public class FMEnchantsCommand implements CommandExecutor {
 
         if (enchantmentClass == null) {
             sender.sendMessage(Util.getLocaleFormatted("messages.enchant-not-found",
-                    Map.of("%name%", enchantName), true));
+                    Map.of("name", enchantName), true));
             return true;
         }
 
@@ -51,7 +52,7 @@ public class FMEnchantsCommand implements CommandExecutor {
         if (args.length >= 2) {
             target = Bukkit.getPlayer(args[1]);
             if (target == null) {
-                sender.sendMessage(Util.getLocaleFormatted("messages.player-not-found", Map.of("%player%", args[1]), true));
+                sender.sendMessage(Util.getLocaleFormatted("messages.player-not-found", Map.of("player", args[1]), true));
                 return true;
             }
         } else {
@@ -61,16 +62,18 @@ public class FMEnchantsCommand implements CommandExecutor {
         ItemStack book = new ItemStack(Material.ENCHANTED_BOOK);
         EnchantmentStorageMeta meta = (EnchantmentStorageMeta) book.getItemMeta();
         meta.addStoredEnchant(enchantment, 1, true);
+        meta.setLore(List.of(Util.processColors(enchantment.getName() +
+                (enchantment.getMaxLevel() > 1 ? "I" : ""))));
         book.setItemMeta(meta);
 
         target.getInventory().addItem(book);
 
         if (target.equals(sender)) {
-            sender.sendMessage(Util.getLocaleFormatted("messages.book-received", Map.of("%enchant%", enchantName), true));
+            sender.sendMessage(Util.getLocaleFormatted("messages.book-received", Map.of("enchant", enchantment.getName()), true));
         } else {
             sender.sendMessage(Util.getLocaleFormatted("messages.book-given",
-                    Map.of("%enchant%", enchantName, "%player%", target.getName()), true));
-            target.sendMessage(Util.getLocaleFormatted("messages.book-received", Map.of("%enchant%", enchantName), true));
+                    Map.of("enchant", enchantment.getName(), "player", target.getName()), true));
+            target.sendMessage(Util.getLocaleFormatted("messages.book-received", Map.of("enchant", enchantment.getName()), true));
         }
 
         return true;

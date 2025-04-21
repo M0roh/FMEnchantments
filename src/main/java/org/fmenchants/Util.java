@@ -1,6 +1,9 @@
 package org.fmenchants;
 
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,4 +67,15 @@ public class Util {
 
         return buffer.toString().replaceAll("&([0-9a-fk-or])", "§$1");
     }
+
+    public static int getEnchantmentLevel(ItemStack itemStack, Enchantment enchantment) {
+        if (itemStack != null && itemStack.hasItemMeta()) {
+            ItemMeta meta = itemStack.getItemMeta();
+            if (meta != null && meta.hasEnchant(enchantment)) {
+                return meta.getEnchantLevel(enchantment);
+            }
+        }
+        return 0;
+    }
+
 }

@@ -6,6 +6,8 @@ import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.ItemStack;
 import org.fmenchants.Util;
 
+import java.util.Locale;
+
 public class LumberjackEnchant extends Enchantment {
     public static final NamespacedKey KEY = new NamespacedKey("fmenchantments", "lumberjack");
 
@@ -45,11 +47,16 @@ public class LumberjackEnchant extends Enchantment {
 
     @Override
     public boolean conflictsWith(Enchantment enchantment) {
-        return false;
+        return enchantment == this;
     }
 
     @Override
     public boolean canEnchantItem(ItemStack itemStack) {
-        return itemStack.getType().name().contains("_AXE");
+        return itemStack != null && itemStack.getType().toString().toUpperCase().contains("_AXE");
+    }
+
+    @Override
+    public NamespacedKey getKey() {
+        return KEY;
     }
 }
