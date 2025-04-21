@@ -4,3 +4,19 @@ main: org.fmenchants.FMEnchants
 api-version: '1.13'
 author: 'Mor0n'
 description: "Add custom enchants from minecraft server 'FrandMine'"
+
+commands:
+  fmenchants:
+    description: Give custom enchantment books
+    usage: /fmenchants give <enchant> [player]
+    permission: fmenchants.give
+    aliases:
+      - fme
+
+permissions:
+  fmenchants.use:
+    description: "Allows player use custom enchants"
+    default: true
+  fmenchants.give:
+    description: "Allow player give custom enchants to somebody"
+    default: op

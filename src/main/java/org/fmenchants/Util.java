@@ -1,13 +1,50 @@
 package org.fmenchants;
 
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 
 public class Util {
-    public static String getLocaleFormatted(String localePath) {
+    public static String getPluginPrefix() {
+        return processColors(FMEnchants.getInstance().getConfig().getString("prefix"));
+    }
+
+    public static String getLocaleFormatted(String localePath, boolean needPrefix) {
+        return getLocaleFormatted(localePath, Collections.emptyMap(), needPrefix);
+    }
+
+    public static String getLocaleFormatted(String localePath, Map<String, String> placeholders, boolean needPrefix) {
         String locale = FMEnchants.getInstance().getConfig().getString(localePath);
-        return processColors(locale);
+        if (locale == null || locale.isEmpty()) {
+            locale = "";
+            FMEnchants.getInstance().getLogger().severe(processColors("&cError! Unable get localization " + localePath + "!"));
+        }
+        locale = processColors(processPlaceholders(locale, placeholders));
+
+        if (needPrefix)
+            locale = getPluginPrefix() + locale;
+        return locale;
+    }
+
+    public static String processPlaceholders(String input, Map<String, String> placeholders) {
+        Pattern pattern = Pattern.compile("%(\\w+)%");
+        Matcher matcher = pattern.matcher(input);
+        StringBuilder result = new StringBuilder();
+
+        while (matcher.find()) {
+            String key = matcher.group(1);
+            String replacement = placeholders.getOrDefault(key, matcher.group(0));
+            matcher.appendReplacement(result, Matcher.quoteReplacement(replacement));
+        }
+
+        matcher.appendTail(result);
+        return result.toString();
     }
 
     public static String processColors(String input) {

@@ -1,2 +1,12 @@
 lumberjack:
   name: "&7Дровосек"
+
+prefix: "&eFMEnchants &7| "
+
+messages:
+  invalid-usage: "&cИспользование: /fmenchants give <зачарование> [игрок]"
+  enchant-not-found: "&cЗачарование &e%name% &cне найдено."
+  player-not-found: "&cИгрок &e%player% &cне найден."
+  must-specify-player: "&cИз консоли нужно указать ник игрока."
+  book-given: "&aВыдана книга с зачарованием &e%enchant% &aигроку &e%player%."
+  book-received: "&aВы получили книгу с зачарованием &e%enchant%."

@@ -35,6 +35,8 @@ public class LumberjackListener implements Listener {
         Player player = event.getPlayer();
         ItemStack tool = player.getInventory().getItemInMainHand();
 
+        if (!player.hasPermission("fmenchants.use")) return;
+
         if (!tool.containsEnchantment(Enchantment.CHANNELING.getByKey(LumberjackEnchant.KEY))) return;
         if (!logBlocks.contains(event.getBlock().getType())) return;
 

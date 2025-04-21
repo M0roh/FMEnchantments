@@ -15,7 +15,7 @@ public class LumberjackEnchant extends Enchantment {
 
     @Override
     public String getName() {
-        return Util.getLocaleFormatted("lumberjack.name");
+        return Util.getLocaleFormatted("lumberjack.name", false);
     }
 
     @Override
