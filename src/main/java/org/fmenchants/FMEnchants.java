@@ -7,12 +7,15 @@ import org.fmenchants.Enchants.LumberjackEnchant;
 import org.fmenchants.Listeners.AnvilListener;
 import org.fmenchants.Listeners.LumberjackListener;
 import org.fmenchants.TabCompleters.FMEnchantsTabCompleter;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
 public final class FMEnchants extends JavaPlugin {
+    public static final String MY_NAMESPACE = "fmenchants";
+
     private static FMEnchants instance;
 
     private static Map<String, Class<? extends Enchantment>> customEnchants = new HashMap<String, Class<? extends Enchantment>>();
@@ -44,6 +47,7 @@ public final class FMEnchants extends JavaPlugin {
         getCommand("fmenchants").setTabCompleter(new FMEnchantsTabCompleter());
     }
 
+    @NotNull
     public static FMEnchants getInstance() {
         return instance;
     }

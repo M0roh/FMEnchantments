@@ -9,6 +9,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.fmenchants.Enchants.LumberjackEnchant;
 
 import java.util.HashSet;
@@ -34,6 +36,7 @@ public class LumberjackListener implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
         ItemStack tool = player.getInventory().getItemInMainHand();
+        ItemMeta meta = tool.getItemMeta();
 
         if (!player.hasPermission("fmenchants.use")) return;
 
@@ -42,6 +45,21 @@ public class LumberjackListener implements Listener {
 
         Set<Block> visited = new HashSet<>();
         chopTree(event.getBlock(), visited);
+
+        if (meta instanceof Damageable) {
+            Damageable damageable = (Damageable) meta;
+
+            int currentDamage = damageable.getDamage();
+            int newDamage = currentDamage + visited.size();
+            int maxDurability = tool.getType().getMaxDurability();
+
+            if (newDamage >= maxDurability) {
+                player.getInventory().setItemInMainHand(null);
+            } else {
+                damageable.setDamage(newDamage);
+                tool.setItemMeta(meta);
+            }
+        }
     }
 
     private void chopTree(Block block, Set<Block> visited) {

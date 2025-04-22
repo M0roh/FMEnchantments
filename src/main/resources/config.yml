@@ -1,7 +1,7 @@
-lumberjack:
-  name: "&7Дровосек"
+enchants:
+  lumberjack: "&7Дровосек"
 
-levelCost: 2
+levelCost: 4
 
 prefix: "&eFMEnchants &7| "
 

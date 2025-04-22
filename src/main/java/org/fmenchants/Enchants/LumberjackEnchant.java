@@ -4,10 +4,11 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.ItemStack;
+import org.fmenchants.FMEnchants;
 import org.fmenchants.Util;
 
 public class LumberjackEnchant extends Enchantment {
-    public static final NamespacedKey KEY = new NamespacedKey("fmenchantments", "lumberjack");
+    public static final NamespacedKey KEY = new NamespacedKey(FMEnchants.MY_NAMESPACE, "lumberjack");
 
     public LumberjackEnchant() {
         super(KEY);
@@ -15,7 +16,8 @@ public class LumberjackEnchant extends Enchantment {
 
     @Override
     public String getName() {
-        return "Lumberjack";
+        return Util.processColors(FMEnchants.getInstance().getConfig()
+                .getString("enchants.lumberjack", "Lumberjack"));
     }
 
     @Override
