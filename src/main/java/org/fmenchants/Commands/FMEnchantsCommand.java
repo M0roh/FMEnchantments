@@ -62,8 +62,6 @@ public class FMEnchantsCommand implements CommandExecutor {
         ItemStack book = new ItemStack(Material.ENCHANTED_BOOK);
         EnchantmentStorageMeta meta = (EnchantmentStorageMeta) book.getItemMeta();
         meta.addStoredEnchant(enchantment, 1, true);
-        meta.setLore(List.of(Util.processColors(enchantment.getName() +
-                (enchantment.getMaxLevel() > 1 ? "I" : ""))));
         book.setItemMeta(meta);
 
         target.getInventory().addItem(book);

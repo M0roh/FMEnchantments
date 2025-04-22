@@ -67,30 +67,4 @@ public class Util {
 
         return buffer.toString().replaceAll("&([0-9a-fk-or])", "§$1");
     }
-
-    public static int getEnchantmentLevel(ItemStack itemStack, Enchantment enchantment) {
-        if (itemStack != null && itemStack.hasItemMeta()) {
-            ItemMeta meta = itemStack.getItemMeta();
-            if (meta != null && meta.hasEnchant(enchantment)) {
-                return meta.getEnchantLevel(enchantment);
-            }
-        }
-        return 0;
-    }
-
-    public static String toRoman(int number) {
-        if (number <= 0) return "";
-
-        StringBuilder result = new StringBuilder();
-        int[] values =    {1000, 900, 500, 400, 100, 90,  50, 40, 10, 9, 5, 4, 1};
-        String[] numerals = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
-
-        for (int i = 0; i < values.length; i++) {
-            while (number >= values[i]) {
-                number -= values[i];
-                result.append(numerals[i]);
-            }
-        }
-        return result.toString();
-    }
 }

@@ -6,8 +6,6 @@ import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.ItemStack;
 import org.fmenchants.Util;
 
-import java.util.Locale;
-
 public class LumberjackEnchant extends Enchantment {
     public static final NamespacedKey KEY = new NamespacedKey("fmenchantments", "lumberjack");
 
@@ -17,7 +15,7 @@ public class LumberjackEnchant extends Enchantment {
 
     @Override
     public String getName() {
-        return Util.getLocaleFormatted("lumberjack.name", false);
+        return "Lumberjack";
     }
 
     @Override

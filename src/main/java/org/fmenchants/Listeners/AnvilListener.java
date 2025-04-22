@@ -16,6 +16,7 @@ import org.fmenchants.FMEnchants;
 import org.fmenchants.Util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,18 +30,30 @@ public class AnvilListener implements Listener {
         ItemStack right = inv.getItem(1);
         if (left == null || right == null) return;
 
-        if (!(right.getItemMeta() instanceof EnchantmentStorageMeta)) return;
+        if (!(right.getItemMeta() instanceof EnchantmentStorageMeta)) {
+            if (left.getItemMeta() instanceof EnchantmentStorageMeta) {
+                left = inv.getItem(1);
+                right = inv.getItem(0);
+            }
+            else
+                return;
+        }
         EnchantmentStorageMeta bookMeta = (EnchantmentStorageMeta) right.getItemMeta();
 
         ItemStack result = left.clone();
         ItemMeta im = result.getItemMeta();
-        List<String> lore = im.getLore();
-        if (lore == null)
-            lore = new ArrayList<>();
 
         boolean changed = false;
 
-        for (Map.Entry<Enchantment,Integer> entry : bookMeta.getStoredEnchants().entrySet()) {
+        Map<Enchantment, Integer> combinedEnchants = new HashMap<>();
+
+        if (im instanceof EnchantmentStorageMeta) {
+            combinedEnchants.putAll(((EnchantmentStorageMeta) im).getStoredEnchants());
+        }
+
+        combinedEnchants.putAll(bookMeta.getStoredEnchants());
+
+        for (Map.Entry<Enchantment, Integer> entry : combinedEnchants.entrySet()) {
             Enchantment ench = entry.getKey();
             int level = entry.getValue();
 
@@ -53,18 +66,17 @@ public class AnvilListener implements Listener {
                 level = Math.min(currentLevel + level, maxLevel);
             }
 
-            im.addEnchant(ench, level, true);
-            if (ench.getKey().getNamespace().equalsIgnoreCase(MY_NAMESPACE))
-                lore.add(Util.processColors(ench.getName() + " " +
-                        (ench.getMaxLevel() > 1 ? Util.toRoman(level) : "")));
+            if (im instanceof EnchantmentStorageMeta)
+                ((EnchantmentStorageMeta) im).addStoredEnchant(ench, level, true);
+            else
+                im.addEnchant(ench, level, true);
             changed = true;
         }
 
         if (changed) {
-            im.setLore(lore);
             result.setItemMeta(im);
             e.setResult(result);
-            e.getInventory().setRepairCost(FMEnchants.getInstance().getConfig().getInt("expCost"));
+            e.getInventory().setRepairCost(FMEnchants.getInstance().getConfig().getInt("levelCost"));
         }
     }
 }
