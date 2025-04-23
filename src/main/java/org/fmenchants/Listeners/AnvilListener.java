@@ -46,7 +46,7 @@ public class AnvilListener implements Listener {
 
             List<String> lore = meta.getLore() == null ? new ArrayList<>() : meta.getLore();
 
-            processItemEnchants(meta, lore, meta.getEnchants());
+            processItemEnchants(meta, right.getItemMeta(), lore, meta.getEnchants());
             meta.setLore(lore);
 
             result.setItemMeta(meta);
@@ -77,7 +77,7 @@ public class AnvilListener implements Listener {
                 enchantments.putAll(left.getEnchantments());
                 enchantments.putAll(right.getEnchantments());
 
-                processItemEnchants(meta, lore, enchantments);
+                processItemEnchants(meta, right.getItemMeta(), lore, enchantments);
                 meta.setLore(lore);
 
                 if (meta instanceof Damageable)
@@ -91,10 +91,33 @@ public class AnvilListener implements Listener {
                 e.setResult(result);
                 e.getInventory().setRepairCost(6);
                 return;
-            }
+            } else if (Util.isValidRepairMaterial(left, right)) {
+                ItemStack result = left.clone();
+                ItemMeta meta = result.getItemMeta();
+                List<String> lore = meta.getLore() == null ? new ArrayList<>() : meta.getLore();
 
-            else
-                return;
+                int max = left.getType().getMaxDurability();
+                int leftDamage = ((Damageable) left.getItemMeta()).getDamage();
+                int durabilityToRepair = max / 4;
+
+                int newDamage = leftDamage + durabilityToRepair;
+                newDamage = Math.max(newDamage, 0);
+                newDamage = Math.min(newDamage, max);
+
+                processItemEnchants(meta, right.getItemMeta(), lore, left.getEnchantments());
+                meta.setLore(lore);
+
+                if (meta instanceof Damageable)
+                    ((Damageable) meta).setDamage(newDamage);
+
+                String rename = inv.getRenameText();
+                if (rename != null && !rename.isEmpty())
+                    meta.setDisplayName(rename);
+
+                result.setItemMeta(meta);
+                e.setResult(result);
+                e.getInventory().setRepairCost(3);
+            } else return;
         }
 
         EnchantmentStorageMeta bookMeta = (EnchantmentStorageMeta) right.getItemMeta();
@@ -113,7 +136,7 @@ public class AnvilListener implements Listener {
 
         combinedEnchants.putAll(bookMeta.getStoredEnchants());
 
-        changed = processItemEnchants(im, lore, combinedEnchants);
+        changed = processItemEnchants(im, right.getItemMeta(), lore, combinedEnchants);
 
         if (changed) {
             String rename = inv.getRenameText();
@@ -127,26 +150,27 @@ public class AnvilListener implements Listener {
         }
     }
 
-    private boolean processItemEnchants(ItemMeta im, List<String> baseLore, Map<Enchantment, Integer> combinedEnchants) {
+    private boolean processItemEnchants(ItemMeta leftMeta, ItemMeta rightMeta, List<String> baseLore, Map<Enchantment, Integer> combinedEnchants) {
         boolean changed = false;
 
         for (Map.Entry<Enchantment, Integer> entry : combinedEnchants.entrySet()) {
             Enchantment ench = entry.getKey();
             int level = entry.getValue();
 
-            if (im.hasEnchant(ench)) {
-                int currentLevel = im.getEnchantLevel(ench);
+            if (leftMeta.hasEnchant(ench) && rightMeta.hasEnchant(ench)) {
+                int currentLevel = Math.max(leftMeta.getEnchantLevel(ench), rightMeta.getEnchantLevel(ench));
                 int maxLevel = ench.getMaxLevel();
 
                 if (currentLevel >= maxLevel) continue;
 
-                level = Math.min(currentLevel + level, maxLevel);
+                if (leftMeta.getEnchantLevel(ench) == rightMeta.getEnchantLevel(ench))
+                    level = Math.min(currentLevel + 1, maxLevel);
             }
 
-            if (im instanceof EnchantmentStorageMeta)
-                ((EnchantmentStorageMeta) im).addStoredEnchant(ench, level, true);
+            if (leftMeta instanceof EnchantmentStorageMeta)
+                ((EnchantmentStorageMeta) leftMeta).addStoredEnchant(ench, level, true);
             else
-                im.addEnchant(ench, level, true);
+                leftMeta.addEnchant(ench, level, true);
 
             boolean enchantFound = false;
             for (int i = 0; i < baseLore.size(); i++) {
