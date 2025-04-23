@@ -16,6 +16,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.fmenchants.Enchants.LumberjackEnchant;
 import org.fmenchants.FMEnchants;
 import org.fmenchants.Util;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,7 +47,7 @@ public class AnvilListener implements Listener {
 
             List<String> lore = meta.getLore() == null ? new ArrayList<>() : meta.getLore();
 
-            processItemEnchants(meta, right.getItemMeta(), lore, meta.getEnchants());
+            processItemEnchants(meta, null, lore, meta.getEnchants());
             meta.setLore(lore);
 
             result.setItemMeta(meta);
@@ -100,9 +101,8 @@ public class AnvilListener implements Listener {
                 int leftDamage = ((Damageable) left.getItemMeta()).getDamage();
                 int durabilityToRepair = max / 4;
 
-                int newDamage = leftDamage + durabilityToRepair;
+                int newDamage = leftDamage - durabilityToRepair;
                 newDamage = Math.max(newDamage, 0);
-                newDamage = Math.min(newDamage, max);
 
                 processItemEnchants(meta, right.getItemMeta(), lore, left.getEnchantments());
                 meta.setLore(lore);
@@ -117,6 +117,7 @@ public class AnvilListener implements Listener {
                 result.setItemMeta(meta);
                 e.setResult(result);
                 e.getInventory().setRepairCost(3);
+                return;
             } else return;
         }
 
@@ -126,8 +127,6 @@ public class AnvilListener implements Listener {
         ItemMeta im = result.getItemMeta();
         List<String> lore = im.getLore() == null ? new ArrayList<>() : im.getLore();
 
-        boolean changed = false;
-
         Map<Enchantment, Integer> combinedEnchants = new HashMap<>();
 
         if (im instanceof EnchantmentStorageMeta) {
@@ -136,7 +135,7 @@ public class AnvilListener implements Listener {
 
         combinedEnchants.putAll(bookMeta.getStoredEnchants());
 
-        changed = processItemEnchants(im, right.getItemMeta(), lore, combinedEnchants);
+        boolean changed = processItemEnchants(im, right.getItemMeta(), lore, combinedEnchants);
 
         if (changed) {
             String rename = inv.getRenameText();
@@ -150,14 +149,14 @@ public class AnvilListener implements Listener {
         }
     }
 
-    private boolean processItemEnchants(ItemMeta leftMeta, ItemMeta rightMeta, List<String> baseLore, Map<Enchantment, Integer> combinedEnchants) {
+    private boolean processItemEnchants(ItemMeta leftMeta, @Nullable ItemMeta rightMeta, List<String> baseLore, Map<Enchantment, Integer> combinedEnchants) {
         boolean changed = false;
 
         for (Map.Entry<Enchantment, Integer> entry : combinedEnchants.entrySet()) {
             Enchantment ench = entry.getKey();
             int level = entry.getValue();
 
-            if (leftMeta.hasEnchant(ench) && rightMeta.hasEnchant(ench)) {
+            if (rightMeta != null && leftMeta.hasEnchant(ench) && rightMeta.hasEnchant(ench)) {
                 int currentLevel = Math.max(leftMeta.getEnchantLevel(ench), rightMeta.getEnchantLevel(ench));
                 int maxLevel = ench.getMaxLevel();
 
