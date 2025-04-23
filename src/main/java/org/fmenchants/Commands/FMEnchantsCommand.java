@@ -56,7 +56,12 @@ public class FMEnchantsCommand implements CommandExecutor {
                 return true;
             }
         } else {
-            target = (Player) sender;
+            if (sender instanceof Player)
+                target = (Player) sender;
+            else {
+                sender.sendMessage(Util.getLocaleFormatted("messages.must-specify-player", true));
+                return true;
+            }
         }
 
         ItemStack book = new ItemStack(Material.ENCHANTED_BOOK);
