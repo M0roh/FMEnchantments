@@ -49,14 +49,19 @@ public class FMEnchantsCommand implements CommandExecutor {
         }
 
         Player target;
-        if (args.length >= 2) {
+        if (args.length > 2) {
             target = Bukkit.getPlayer(args[1]);
             if (target == null) {
                 sender.sendMessage(Util.getLocaleFormatted("messages.player-not-found", Map.of("player", args[1]), true));
                 return true;
             }
         } else {
-            target = (Player) sender;
+            if (sender instanceof Player)
+                target = (Player) sender;
+            else {
+                sender.sendMessage(Util.getLocaleFormatted("messages.must-specify-player", true));
+                return true;
+            }
         }
 
         ItemStack book = new ItemStack(Material.ENCHANTED_BOOK);
